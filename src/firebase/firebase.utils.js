@@ -13,6 +13,31 @@ const config = {
   measurementId: "G-ZP25T5E7M4"
 };
 
+export const createUserProfileDocument = async (userAuth, additionalData) => {
+  // Only run function if user signs in (on sign out we get null as userAuth)
+  if (!userAuth) return;
+
+  const userRef = firestore.doc(`users/${userAuth.uid}`);
+  const userSnapshot = await userRef.get();
+
+  if (!userSnapshot.exists) {
+    const { displayName, email } = userAuth;
+    const createdAt = new Date();
+    try {
+      await userRef.set({
+        displayName,
+        email,
+        createdAt,
+        ...additionalData
+      });
+    } catch (error) {
+      console.error("Unable to create user profile document", error.message);
+    }
+  }
+
+  return userRef;
+};
+
 firebase.initializeApp(config);
 
 export const auth = firebase.auth();
