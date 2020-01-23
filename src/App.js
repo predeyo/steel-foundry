@@ -10,10 +10,8 @@ import SignInAndSignUpPage from "./pages/sign-in-and-sign-up/sign-in-and-sign-up
 
 import Header from "./components/header/header.component.jsx";
 
-import { setCurrentUser } from "./redux/user/user.actions.js";
 import { selectCurrentUser } from "./redux/user/user.selectors.js";
-
-import { auth, createUserProfileDocument } from "./firebase/firebase.utils.js";
+import { checkUserSession } from "./redux/user/user.actions.js";
 
 import "./App.css";
 
@@ -21,21 +19,22 @@ class App extends React.Component {
   unsubscribeFromAuth = null;
 
   componentDidMount() {
-    const { setCurrentUser } = this.props;
-    this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
-      if (userAuth) {
-        const userRef = await createUserProfileDocument(userAuth);
-        userRef.onSnapshot(snapshot => {
-          setCurrentUser({
-            id: snapshot.id,
-            ...snapshot.data()
-          });
-        });
-      } else {
-        // Sets currentUser to null.
-        setCurrentUser(userAuth);
-      }
-    });
+    const { checkUserSession } = this.props;
+    checkUserSession();
+    // this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
+    //   if (userAuth) {
+    //     const userRef = await createUserProfileDocument(userAuth);
+    //     userRef.onSnapshot(snapshot => {
+    //       setCurrentUser({
+    //         id: snapshot.id,
+    //         ...snapshot.data()
+    //       });
+    //     });
+    //   } else {
+    //     // Sets currentUser to null.
+    //     setCurrentUser(userAuth);
+    //   }
+    // });
   }
 
   // This will close the auth subscription after component is no longer used,
@@ -70,7 +69,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setCurrentUser: user => dispatch(setCurrentUser(user))
+  checkUserSession: () => dispatch(checkUserSession())
 });
 
 export default connect(
