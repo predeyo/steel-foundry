@@ -10,5 +10,15 @@
   .buttons {
     display: flex;
     justify-content: space-between;
+    @media screen and (max-width: 800px) {
+      & button {
+        min-width: unset;
+        width: 49%;
+      }
+    }
+  }
+  @media screen and (max-width: 800px) {
+    width: 90%;
+    margin-bottom: 30px;
   }
 }
