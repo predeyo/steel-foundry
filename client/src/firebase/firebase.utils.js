@@ -79,14 +79,10 @@ export const getCurrentUser = () => {
   });
 };
 
-export const updateUserCartItems = (user, items) => {
-  // console.log(user);
+export const updateUserCartItems = async (user, cartItems) => {
   const userRef = firestore.collection("users").doc(user.id);
   try {
-    userRef.set({
-      ...user,
-      cartItems: items
-    });
+    await userRef.update({ cartItems });
   } catch (error) {
     console.error("Unable to update user cart items on firestore", error);
   }

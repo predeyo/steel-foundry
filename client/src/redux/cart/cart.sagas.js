@@ -21,7 +21,8 @@ function* updateFirebaseCartItems() {
   if (!currentUser) return;
   try {
     const cartItems = yield select(selectCartItems);
-    yield call(updateUserCartItems(currentUser, cartItems));
+    yield call(updateUserCartItems, currentUser, cartItems);
+    // Possible future integrations with cart update success for firebase - but currenty not in use
     yield put(updateCartInFirebaseSuccess());
   } catch (error) {
     yield console.error("Unable to update firebase cart items", error);
@@ -47,15 +48,13 @@ export function* onSignInSuccess() {
   );
 }
 
-export function* onAddItem() {
-  yield takeLatest(CartActionTypes.ADD_ITEM, updateFirebaseCartItems);
-}
-export function* onRemoveItem() {
-  yield takeLatest(CartActionTypes.REMOVE_ITEM, updateFirebaseCartItems);
-}
-export function* onClearItem() {
+export function* onCartUpdate() {
   yield takeLatest(
-    CartActionTypes.CLEAR_ITEM_FROM_CART,
+    [
+      CartActionTypes.ADD_ITEM,
+      CartActionTypes.REMOVE_ITEM,
+      CartActionTypes.CLEAR_ITEM_FROM_CART
+    ],
     updateFirebaseCartItems
   );
 }
@@ -63,9 +62,7 @@ export function* onClearItem() {
 export function* cartSagas() {
   yield all([
     call(onSignOutSuccess),
-    call(onAddItem),
-    call(onSignInSuccess),
-    call(onRemoveItem),
-    call(onClearItem)
+    call(onCartUpdate),
+    call(onSignInSuccess)
   ]);
 }
