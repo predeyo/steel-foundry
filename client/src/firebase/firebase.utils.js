@@ -79,6 +79,19 @@ export const getCurrentUser = () => {
   });
 };
 
+export const updateUserCartItems = (user, items) => {
+  // console.log(user);
+  const userRef = firestore.collection("users").doc(user.id);
+  try {
+    userRef.set({
+      ...user,
+      cartItems: items
+    });
+  } catch (error) {
+    console.error("Unable to update user cart items on firestore", error);
+  }
+};
+
 export const auth = firebase.auth();
 export const firestore = firebase.firestore();
 
