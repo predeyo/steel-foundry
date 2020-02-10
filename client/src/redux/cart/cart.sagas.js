@@ -12,11 +12,11 @@ import { updateUserCartItems } from "../../firebase/firebase.utils.js";
 import { selectCurrentUser } from "../user/user.selectors.js";
 import { selectCartItems } from "./cart.selectors.js";
 
-function* clearCartOnSignOut() {
+export function* clearCartOnSignOut() {
   yield put(clearCart());
 }
 
-function* updateFirebaseCartItems() {
+export function* updateFirebaseCartItems() {
   const currentUser = yield select(selectCurrentUser);
   if (!currentUser) return;
   try {
@@ -29,9 +29,8 @@ function* updateFirebaseCartItems() {
   }
 }
 
-function* setCartFromFirebaseOnSignIn() {
-  const currentUser = yield select(selectCurrentUser);
-  const { cartItems } = yield currentUser;
+export function* setCartFromFirebaseOnSignIn() {
+  const { cartItems } = yield select(selectCurrentUser);
   if (cartItems && cartItems.length > 0) {
     yield put(setCartFromFirebase(cartItems));
   }
